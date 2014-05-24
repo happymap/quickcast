@@ -21,8 +21,9 @@ io.sockets.on('connection', function (socket) {
 	})
 
 	socket.on('send', function(data) {
-		var senderUserId = data.userId,
-		receiverUserId = data.room.replace(senderUserId, "");
-		io.sockets.in(data.room).emit('message', data);
+		if (data & data.room) {
+			io.sockets.in(data.room).emit('message', data);
+			console.log('message', data);
+		}
 	});
 });
