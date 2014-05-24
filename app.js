@@ -7,7 +7,7 @@ server = app.listen(3000, function() {
 	console.log('listening on port %d', server.address().port);
 });
 
-io = io.listen(server, {log: conf.socketio.log});
+io = io.listen(server);
 
 io.sockets.on('connection', function (socket) {
 	socket.on('subscribe', function(room) { 
