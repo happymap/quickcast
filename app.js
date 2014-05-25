@@ -3,6 +3,7 @@ var express = require('express'),
 	server = require('http').createServer(app),
 	io = require('socket.io');
 
+app.use(express.static(__dirname + '/public'));
 server = app.listen(3000, function() {
 	console.log('listening on port %d', server.address().port);
 });
