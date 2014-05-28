@@ -30,7 +30,7 @@ io.sockets.on('connection', function (socket) {
 		redisClient.sadd(socketId, objectId);
 
 		//Return the number of connected accounts
-		broadcast(socket, objectId);
+		broadcast(objectId);
 
 		console.log('enter room', objectId);
 
@@ -50,16 +50,9 @@ io.sockets.on('connection', function (socket) {
 		//remove index
 		redisClient.srem(socketId, objectId);
 
-		broadcast(socket, objectId);
+		broadcast(objectId);
 
 		console.log('leave room', objectId);
-	})
-
-	socket.on('send', function(data) {
-		if (data & data.room) {
-			io.sockets.in(data.room).emit('message', data);
-			console.log('message', data);
-		}
 	})
 
 	socket.on('disconnect', function() {
@@ -68,19 +61,24 @@ io.sockets.on('connection', function (socket) {
 			//remove user's observation for each object
 			objects.forEach(function(objectId) {
 				redisClient.hdel(objectId, socket.id);
-				broadcast(socket, objectId);
-			});
+				//remove index for this socket id
+				
+				redisClient.srem(socket.id, objectId);
 
-			//remove index for this socket id
-			redisClient.srem(socket.id, objects);
+				broadcast(objectId);
+			});
+			
 		});
 
-		console.log('disconnected from client', socket);
+		console.log('disconnected from client');
 	});
 });
 
-function broadcast(socket, objectId) {
-	socket.broadcast.emit(objectId, {
-		num: redisClient.hlen(objectId)
+function broadcast(objectId) {
+	redisClient.hlen(objectId, function(err, len) {
+		io.sockets.in(objectId).emit(objectId, {
+			num: len,
+			objectId: objectId
+		});
 	});
 }

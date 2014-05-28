@@ -2,21 +2,11 @@
 <head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<script>
-  var socket = io.connect('http://localhost:3000');
-  socket.on('connect', function(){
-  	$(".state").text("Connected!");
-  	console.log("connected");
-    socket.on('event', function(data){
-    	$(".state").text("event");
-    });
-    socket.on('disconnect', function(){
-    	$(".state").text("Disconnected");
-    });
-  });
-</script>
+<script src="client.js"></script>
 </head>
 <body>
 	<div class="state"></div>
+	<button class="subscribe" type="button" name="subscribe" onclick="subscribe()">subscribe</button>
+	<button class="unsubscribe" type="button" name="unsubscribe" onclick="subscribe()">unsubscribe</button>
 </body>
 </html>
