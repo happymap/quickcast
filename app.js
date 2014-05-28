@@ -29,7 +29,11 @@ io.sockets.on('connection', function (socket) {
 		//Index for getting objectId with socketId
 		redisClient.sadd(socketId, objectId);
 
-		console.log('enter room', data.objectId);
+		//Return the number of connected accounts
+		broadcast(socket, objectId);
+
+		console.log('enter room', objectId);
+
 	})
 
 	socket.on('unsubscribe', function(data) {
@@ -46,7 +50,9 @@ io.sockets.on('connection', function (socket) {
 		//remove index
 		redisClient.srem(socketId, objectId);
 
-		console.log('leave room', room);
+		broadcast(socket, objectId);
+
+		console.log('leave room', objectId);
 	})
 
 	socket.on('send', function(data) {
@@ -62,13 +68,19 @@ io.sockets.on('connection', function (socket) {
 			//remove user's observation for each object
 			objects.forEach(function(objectId) {
 				redisClient.hdel(objectId, socket.id);
+				broadcast(socket, objectId);
 			});
 
 			//remove index for this socket id
 			redisClient.srem(socket.id, objects);
-
 		});
 
 		console.log('disconnected from client', socket);
 	});
 });
+
+function broadcast(socket, objectId) {
+	socket.broadcast.emit(objectId, {
+		num: redisClient.hlen(objectId)
+	});
+}
