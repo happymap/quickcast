@@ -7,8 +7,12 @@
   socket.on('connect', function(){
   	$(".state").text("Connected!");
   	console.log("connected");
-    socket.on('event', function(data){});
-    socket.on('disconnect', function(){});
+    socket.on('event', function(data){
+    	$(".state").text("event");
+    });
+    socket.on('disconnect', function(){
+    	$(".state").text("Disconnected");
+    });
   });
 </script>
 </head>
