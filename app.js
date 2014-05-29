@@ -6,7 +6,10 @@ var express = require('express'),
 const redis = require('redis');
 const redisClient = redis.createClient();
 
+redisClient.flushdb();
+
 app.use(express.static(__dirname + '/public'));
+
 server = app.listen(3000, function() {
 	console.log('listening on port %d', server.address().port);
 });
